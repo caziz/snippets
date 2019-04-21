@@ -1,6 +1,7 @@
 #! /usr/bin/env python3
 
-# Simulates Conway's Game of Life in the terminal by using braille unicode characters.
+# Simulates Conway's Game of Life in the terminal by using braille unicode
+# characters.
 
 # https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life
 # https://en.wikipedia.org/wiki/Braille_Patterns
@@ -10,12 +11,14 @@ import random
 
 fps = 15
 
+
 class Game:
   # init a game state randomly
   def __init__(self, w, h):
     self.w = w
     self.h = h
-    self.state = [[bool(random.getrandbits(1)) for i in range(self.w)] for i in range(self.h)]
+    self.state = [[bool(random.getrandbits(1)) for _ in range(self.w)]
+                  for _ in range(self.h)]
 
   # run the game indefinitely
   def run(self):
@@ -29,9 +32,9 @@ class Game:
   # display and update state each tick
   def tick(self):
     self.display()
-    new_state = [[False for i in range(self.w)] for i in range(self.h)]
-    for x in range(0, self.w):
-      for y in range(0, self.h):
+    new_state = [[False for _ in range(self.w)] for _ in range(self.h)]
+    for x in range(self.w):
+      for y in range(self.h):
         neighbors = 0
         for (dx, dy) in self.dirs:
           xp = x + dx
@@ -40,22 +43,26 @@ class Game:
             yp >= 0 and yp < self.h and
             self.state[yp][xp]):
               neighbors += 1
-        new_state[y][x] = ((neighbors == 2 and self.state[y][x]) or neighbors == 3)
+        new_state[y][x] = ((neighbors == 2 and self.state[y][x]) or
+                           neighbors == 3)
     self.state = new_state
 
   # print state using braille characters
   def display(self):
-    pixels = [[0x2800 for w in range(-(-self.w // 2))] for h in range(-(-self.h // 4))]
+    pixel_w = -(-self.w // 2)
+    pixel_h = -(-self.h // 4)
+    pixels = [[0x2800 for _ in range(pixel_w)] for _ in range(pixel_h)]
     vals = [[0x1,  0x2,  0x4, 0x40], [0x8, 0x10, 0x20, 0x80]]
-    for h in range(0, self.h):
-      for w in range(0, self.w):
+    for h in range(self.h):
+      for w in range(self.w):
         pixels[h // 4][w // 2] += self.state[h][w] * vals[w % 2][h % 4]
     for row in pixels:
       print(chr(0x2551), end="")
       for pixel in row:
         print(chr(pixel), end="")
       print(chr(0x2551))
-    print(chr(0x2560) + (chr(0x2550) * (-(-self.w // 2))) + chr(0x2563))
+    print(chr(0x2560) + (chr(0x2550) * pixel_w) + chr(0x2563))
+
 
 class GameState(Game):
   # init the game with a particular state
@@ -64,20 +71,27 @@ class GameState(Game):
     self.h = len(state)
     self.state = state
 
+
 pulsar = [
   [False] * 17,
   [False] * 17,
   [False] * 4 + [True] * 3 + [False] * 3 + [True] * 3 + [False] * 4,
   [False] * 17,
-  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + [True, False, False], 
-  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + [True, False, False], 
-  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + [True, False, False],
+  [False, False, True] + [False] * 4 + \
+    [True, False, True] + [False] * 4 + [True, False, False],
+  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + \
+    [True, False, False],
+  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + \
+    [True, False, False],
   [False] * 4 + [True] * 3 + [False] * 3 + [True] * 3 + [False] * 4,
   [False] * 17,
   [False] * 4 + [True] * 3 + [False] * 3 + [True] * 3 + [False] * 4,
-  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + [True, False, False], 
-  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + [True, False, False], 
-  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + [True, False, False],
+  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + \
+    [True, False, False],
+  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + \
+    [True, False, False],
+  [False, False, True] + [False] * 4 + [True, False, True] + [False] * 4 + \
+    [True, False, False],
   [False] * 17,
   [False] * 4 + [True] * 3 + [False] * 3 + [True] * 3 + [False] * 4,
   [False] * 17,
@@ -111,13 +125,11 @@ gun = \
   [[False] * 5 + [True, True] + [False] * 18] * 2 + \
   [[False] * 25]
 
-
-
-# game = Game(80, 50)
+game = Game(80, 50)
 # game = GameState([[True, True], [True, True], [False, False]])
 # game = GameState(pulsar)
 # game = GameState(column)
-game = GameState(gun)
+# game = GameState(gun)
 game.run()
 
 
